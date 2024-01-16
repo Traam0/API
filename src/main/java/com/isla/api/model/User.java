@@ -2,6 +2,7 @@ package com.isla.api.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,8 +10,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -25,6 +28,7 @@ public class User {
     @Column(unique = true)
     private String username;
     @Column(unique = true)
+    @Email
     private String email;
     private String password;
     @Column(nullable = true)
@@ -35,10 +39,22 @@ public class User {
     private String version;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Enumerated(EnumType.STRING)
+    private Privacy privacy;
 
-    public User(Long id, String username, String email, String password, LocalDateTime email_verified,
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private java.util.List<Post> posts;
+
+    public User(Long id,
+            String username,
+            String email,
+            String password,
+            LocalDateTime email_verified,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt, String version, Role role) {
+            LocalDateTime updatedAt,
+            String version,
+            Role role,
+            Privacy privacy) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -48,6 +64,7 @@ public class User {
         this.updatedAt = updatedAt;
         this.version = version;
         this.role = role;
+        this.privacy = privacy;
     }
 
     public User() {
@@ -124,6 +141,14 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Privacy getPrivacy() {
+        return privacy;
+    }
+
+    public void setPrivacy(Privacy privacy) {
+        this.privacy = privacy;
     }
 
 }
